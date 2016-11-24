@@ -5,8 +5,14 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     </head>
     <body>
+        <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+
         <p th:text="'Hello, ' + ${name} + '!' + 'Welcome to Buddy Bank!'"/>
 
         <img height="500px" width="295px" src="/images/Buddy1.jpg" alt="Buddy Bank"/>
+
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" value="Sign Out"/>
+        </form>
     </body>
 </html>
