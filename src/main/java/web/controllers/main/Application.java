@@ -8,8 +8,8 @@ import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
 
-@ComponentScan(basePackages = {"web.controllers"})
-//@PropertySource("classpath:/config/application.properties")
+@ComponentScan(basePackages = {"config","web.controllers"})
+@PropertySource("classpath:/config/application.properties")
 public class Application {
 
     public static void main(String[] args) {
