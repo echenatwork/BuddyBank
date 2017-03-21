@@ -3,7 +3,7 @@
 # IDE folders and files
 *.iml
 .idea/**
-config/application.properties
+src/main/resources/config/application.properties
 
 # compiled output
 target/**
