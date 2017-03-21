@@ -1,3 +1,6 @@
 # This is the application.properties file that has been scrubbed of all security related values. You'll need to populate them youself to get it to work locally
 
 name=Buddy
+spring.jpa.properties.hibernate.show_sql=true
+spring.jpa.properties.hibernate.use_sql_comments=true
+spring.jpa.properties.hibernate.format_sql=true
