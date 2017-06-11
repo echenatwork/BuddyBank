@@ -19,6 +19,8 @@ public class PasswordTool {
     private int iterations = 100;
     private int keyLength = 256;
 
+
+
     private SecureRandom secureRandom = new SecureRandom();
     private BASE64Encoder base64Encoder = new BASE64Encoder();
     private BASE64Decoder base64Decoder = new BASE64Decoder();

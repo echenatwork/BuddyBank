@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Account Page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+
+<p th:text="'Hello, ' + ${name} + '!'"/>
+
+<p th:text="'Current Account Balance: ' + ${currentAccountBalance}"/>
+
+<h1>Withdraw</h1>
+<form action="#" th:action="@{/transfer}" th:object="${transferRequest}" method="post">
+    <p>Transfer Amount: <input type="text" th:field="*{amount}"/> </p>
+    <p>Notes: <input type="text" th:field="*{description}" /></p>
+    <p>Destination Account:
+        <select th:field="*{receiverAccountCode}">
+            <option th:each="accountEntry : ${receiverAccounts}"
+                th:value="${accountEntry.key}"
+                th:text="${accountEntry.value}">ReplacedValue</option>
+        </select> </p>
+    <p><input type="submit" value="submit"/> </p>
+</form>
+
+<h4>Transaction History</h4>
+<table border="1">
+    <tr>
+        <th>Code</th>
+        <th>Transaction Type</th>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Balance after</th>
+        <th>Description</th>
+    </tr>
+    <tr th:each="transaction : ${transactions}">
+        <td th:text="${transaction.getTransactionCode()}"></td>
+        <td th:text="${transaction.getTransactionType()}"></td>
+        <td th:text="${transaction.getTransactionDate()}"></td>
+        <td th:text="${transaction.getAmount()}"></td>
+        <td th:text="${transaction.getAccountBalanceAfterTransaction()}"></td>
+        <td th:text="${transaction.getDescription()}"></td>
+    </tr>
+</table>
+
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Sign Out"/>
+</form>
+</body>
+</html>

@@ -37,6 +37,9 @@ public class User {
     )
     private List<Role> roles;
 
+    @OneToOne(mappedBy = "owner", fetch = FetchType.EAGER)
+    private Account account;
+
     public Long getId() {
         return id;
     }
@@ -91,5 +94,13 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 }

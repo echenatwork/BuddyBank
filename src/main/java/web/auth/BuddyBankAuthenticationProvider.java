@@ -3,6 +3,7 @@ package web.auth;
 import db.dao.UserRepository;
 import db.entity.User;
 import manager.UserManager;
+import manager.UserManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,24 +28,8 @@ public class BuddyBankAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private PasswordTool passwordTool;
 
-    @Autowired UserManager userManager;
-
-
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-
-        // TODO testing hook
-        boolean createNormalUser = false;
-        if (createNormalUser == true) {
-            userManager.createDefaultUser();
-        }
-
-        // TODO testing hook
-        boolean createAdminUser = false;
-        if (createAdminUser == true) {
-            userManager.createAdminUser();
-        }
-
         String name = authentication.getName();
         String password = authentication.getCredentials().toString();
 

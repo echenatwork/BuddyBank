@@ -1,7 +1,7 @@
 package db.dao;
 
 import db.entity.Role;
-import manager.RoleCode;
+import db.entity.RoleCode;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
