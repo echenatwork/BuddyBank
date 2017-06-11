@@ -3,7 +3,6 @@ package db.entity;
 /**
  * Created by Eric on 3/19/2017.
  */
-import manager.RoleCode;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -11,6 +10,8 @@ import java.util.List;
 
 @Entity
 public class Role implements GrantedAuthority {
+
+    private static final String ROLE_PREFIX = "ROLE_";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -42,7 +43,7 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return roleCode.toString();
+        return ROLE_PREFIX + roleCode.name();
     }
 }
 
