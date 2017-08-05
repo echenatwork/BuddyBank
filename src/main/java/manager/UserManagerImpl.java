@@ -36,7 +36,8 @@ public class UserManagerImpl implements UserManager {
     private AccountRepository accountRepository;
 
     @Override
-    public User createNewUser(String userName, String firstName, String lastName, String password, Set<RoleCode> roleCodes) {
+    public User createNewUser(String userName, String firstName, String lastName, String password,
+                              Set<RoleCode> roleCodes, String accountCode, BigDecimal initialBalance) {
         User user = new User();
         user.setUserName(userName);
         user.setFirstName(firstName);
@@ -56,7 +57,8 @@ public class UserManagerImpl implements UserManager {
         Account account = new Account();
         account.setOwner(user);
         account.setAccountName(userName + " Account");
-        account.setBalance(BigDecimal.ZERO);
+        account.setBalance(initialBalance);
+        account.setAccountCode(accountCode);
         accountRepository.save(account);
 
         user.setAccount(account);

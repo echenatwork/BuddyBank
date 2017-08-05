@@ -84,9 +84,8 @@ public class AccountController {
         return "account";
     }
 
-    // TODO remove model parameter
     @PostMapping("/transfer")
-    public String transferView(@ModelAttribute TransferRequest transferRequest, Model model, HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes) {
+    public String transferEndpoint(@ModelAttribute TransferRequest transferRequest, HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes) {
         String userName = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userManager.findByUserName(userName);
         Account senderAccount = user.getAccount();
@@ -113,18 +112,4 @@ public class AccountController {
         // returns the view name
         return "redirect:/account";
     }
-
-    @GetMapping("/admin/test")
-    public String testAdminView(Model model, HttpServletRequest httpServletRequest) {
-        String userName = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userManager.findByUserName(userName);
-        Account account = user.getAccount();
-
-        model.addAttribute("name", "ADMIN: " + user.getFirstName());
-
-        // returns the view name
-        return "account";
-    }
-
 }
