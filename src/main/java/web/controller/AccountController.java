@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import web.model.TransferRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +29,11 @@ import java.util.Map;
 @Controller
 public class AccountController {
 
+    private static final String FLASH_MAP_ACCOUNT_MESSAGES = "messages";
+    private static final String FLASH_MAP_ACCOUNT_TRANSFER_SUCCESS = "transferSuccessful";
+    private static final String FLASH_MAP_ACCOUNT_TRANSFER_REQUEST_MODEL = "transferRequestModel";
+
+
     @Autowired
     private UserManager userManager;
 
@@ -40,6 +47,14 @@ public class AccountController {
     public String accountView(Model model, HttpServletRequest httpServletRequest) {
         String userName = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+        Map<String, ?> flashMap = RequestContextUtils.getInputFlashMap(httpServletRequest);
+        List<String> messages = null;
+        if (flashMap != null) {
+            messages = (List<String>)flashMap.get(FLASH_MAP_ACCOUNT_MESSAGES);
+        }
+        model.addAttribute("messages", messages);
+
+
         User user = userManager.findByUserName(userName);
         Account account = user.getAccount();
 
@@ -50,6 +65,8 @@ public class AccountController {
         model.addAttribute("currentAccountBalance", formattedBalance);
         model.addAttribute("transactions", account.getAccountTransactions());
 
+
+        // TODO if error, recreate the sending form
         TransferRequest transferRequest = new TransferRequest();
         model.addAttribute("transferRequest", transferRequest);
 
@@ -67,50 +84,34 @@ public class AccountController {
         return "account";
     }
 
+    // TODO remove model parameter
     @PostMapping("/transfer")
-    public String transferView(@ModelAttribute TransferRequest transferRequest, Model model, HttpServletRequest httpServletRequest) {
+    public String transferView(@ModelAttribute TransferRequest transferRequest, Model model, HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes) {
         String userName = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         User user = userManager.findByUserName(userName);
         Account senderAccount = user.getAccount();
-
+        boolean isTransferSuccessful = false;
+        List<String> messages = new ArrayList<>();
         try {
             BigDecimal transferAmount = new BigDecimal(transferRequest.getAmount());
             String transferDescription = transferRequest.getDescription();
             String receiverAccountCode = transferRequest.getReceiverAccountCode();
 
-            accountTransactionManager.transferAmount(senderAccount.getAccountCode(), transferAmount, receiverAccountCode, transferDescription);
+            AccountTransaction sendingTransaction = accountTransactionManager.transferAmount(senderAccount.getAccountCode(), transferAmount, receiverAccountCode, transferDescription);
 
-            Account receiverAccount = accountManager.findByAccountCode(receiverAccountCode);
-
-
-
+            isTransferSuccessful = true;
+            messages.add("Transfer successful - created transcation: " + sendingTransaction.getTransactionCode());
         } catch (Exception e) {
-            // TODO error message handling
-            throw new RuntimeException(e);
+            // TODO add logging
+            messages.add(e.getMessage());
+            redirectAttributes.addFlashAttribute(FLASH_MAP_ACCOUNT_TRANSFER_REQUEST_MODEL, transferRequest);
         }
 
-
-
-
-
-
-
-        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
-        String formattedBalance = currencyFormatter.format(senderAccount.getBalance());
-
-        model.addAttribute("name", user.getFirstName());
-        model.addAttribute("currentAccountBalance", formattedBalance);
-        model.addAttribute("transactions", senderAccount.getAccountTransactions());
-
-        AccountTransaction withdrawalRequest = new AccountTransaction();
-        model.addAttribute("withdrawalRequest", withdrawalRequest);
-
-        List<String> receiverAccountCodes = new ArrayList<>();
-
+        redirectAttributes.addFlashAttribute(FLASH_MAP_ACCOUNT_MESSAGES, messages);
+        redirectAttributes.addFlashAttribute(FLASH_MAP_ACCOUNT_TRANSFER_SUCCESS, isTransferSuccessful);
 
         // returns the view name
-        return "account";
+        return "redirect:/account";
     }
 
     @GetMapping("/admin/test")

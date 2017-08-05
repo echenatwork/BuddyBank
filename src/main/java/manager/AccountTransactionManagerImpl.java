@@ -5,12 +5,15 @@ import db.dao.AccountTransactionRepository;
 import db.entity.Account;
 import db.entity.AccountTransaction;
 import db.entity.TransactionType;
+import error.PersistentException;
+import error.RequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Created by Eric on 6/9/2017.
@@ -29,7 +32,15 @@ public class AccountTransactionManagerImpl implements AccountTransactionManager 
     @Transactional
     public AccountTransaction transferAmount(String senderAccountCode, BigDecimal transferAmount, String receiverAccountCode, String transferDescription) {
 
-        // TODO validations like transferAmount > 0
+        if (transferAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RequestException("Transfer amount: " + transferAmount + " is not allowed. Amounts must be greater than 0");
+        }
+        if (Objects.equals(senderAccountCode, receiverAccountCode)) {
+            throw new RequestException("Sender account (" + senderAccountCode + ") must be different than receiver account (" + receiverAccountCode + ")");
+        }
+
+        // TODO validate precision/scale isn't below fraction of a cent
+
 
         Account senderAccount = accountRepository.findByAccountCode(senderAccountCode);
         Account receiverAccount = accountRepository.findByAccountCode(receiverAccountCode);
@@ -37,8 +48,7 @@ public class AccountTransactionManagerImpl implements AccountTransactionManager 
         BigDecimal newSendingBalance = senderAccount.getBalance().subtract(transferAmount);
 
         if (newSendingBalance.compareTo(BigDecimal.ZERO) < 0) {
-            // TODO change to better exception
-            throw new RuntimeException(senderAccountCode + " does not have sufficient balance for this transaction");
+            throw new RequestException(senderAccountCode + " does not have sufficient balance for this transaction");
         }
 
         senderAccount.setBalance(newSendingBalance);

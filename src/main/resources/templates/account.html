@@ -11,7 +11,11 @@
 
 <p th:text="'Current Account Balance: ' + ${currentAccountBalance}"/>
 
-<h1>Withdraw</h1>
+<span th:if="${messages != null &amp;&amp; !messages.isEmpty()}">
+    <h4 th:each="message : ${messages}" th:text="${message}"></h4>
+</span>
+
+<h1>Transfer</h1>
 <form action="#" th:action="@{/transfer}" th:object="${transferRequest}" method="post">
     <p>Transfer Amount: <input type="text" th:field="*{amount}"/> </p>
     <p>Notes: <input type="text" th:field="*{description}" /></p>
