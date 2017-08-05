@@ -10,7 +10,7 @@ public class CreateUserRequest {
     private Boolean isAdmin;
 
     private String accountCode;
-    private BigDecimal initialBalance;
+    private BigDecimal initialBalance = BigDecimal.ZERO;
 
     public String getUsername() {
         return username;
