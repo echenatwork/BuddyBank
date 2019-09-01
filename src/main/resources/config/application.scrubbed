@@ -1,4 +1,4 @@
-# This is the application.properties file that has been scrubbed of all security related values. You'll need to populate them youself to get it to work locally
+# This is the application.properties file that has been scrubbed of all security related values. You'll need to populate them yourself to get it to work locally
 
 name=Buddy
 spring.jpa.properties.hibernate.show_sql=true

@@ -84,6 +84,7 @@ public class AccountController {
         return "account";
     }
 
+
     @PostMapping("/transfer")
     public String transferEndpoint(@ModelAttribute TransferRequest transferRequest, HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes) {
         String userName = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();

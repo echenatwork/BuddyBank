@@ -22,8 +22,6 @@ public class UserManagerImpl implements UserManager {
 
     private static final String INITIAL_ACCOUNT_TRANSACTION_DESCRIPTION = "Initial account transaction";
 
-    private static final int DEFAULT_SALT_LENGTH = 32;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -53,9 +51,7 @@ public class UserManagerImpl implements UserManager {
             Role role = roleRepository.findByRoleCode(roleCode);
             user.getRoles().add(role);
         }
-        String salt = passwordTool.generateSalt(DEFAULT_SALT_LENGTH);
-        user.setSalt(salt);
-        String passwordHash = passwordTool.hashPassword(password, salt);
+        String passwordHash = passwordTool.hashPassword(password);
         user.setPasswordHash(passwordHash);
         userRepository.save(user);
 
@@ -84,9 +80,7 @@ public class UserManagerImpl implements UserManager {
     @Override
     public User saveNewPassword(String userName, String password) {
         User user = userRepository.findByUserName(userName);
-        String salt = passwordTool.generateSalt(DEFAULT_SALT_LENGTH);
-        user.setSalt(salt);
-        String passwordHash = passwordTool.hashPassword(password, salt);
+        String passwordHash = passwordTool.hashPassword(password);
         user.setPasswordHash(passwordHash);
         userRepository.save(user);
         return user;

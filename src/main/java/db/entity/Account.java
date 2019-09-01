@@ -11,7 +11,7 @@ import java.util.List;
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Long id;
 
@@ -31,6 +31,10 @@ public class Account {
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     @OrderBy("transaction_date DESC")
     private List<AccountTransaction> accountTransactions;
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    @OrderBy("start_date_time ASC")
+    private List<AccountToInterestRateSchedule> accountToInterestRateSchedules;
 
     @Version
     @Column(name = "version")
@@ -91,5 +95,13 @@ public class Account {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public List<AccountToInterestRateSchedule> getAccountToInterestRateSchedules() {
+        return accountToInterestRateSchedules;
+    }
+
+    public void setAccountToInterestRateSchedules(List<AccountToInterestRateSchedule> accountToInterestRateSchedules) {
+        this.accountToInterestRateSchedules = accountToInterestRateSchedules;
     }
 }

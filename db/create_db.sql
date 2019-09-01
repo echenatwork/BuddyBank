@@ -1,7 +1,6 @@
 CREATE TABLE `user` (
     user_id int(11) NOT NULL AUTO_INCREMENT,
     user_name varchar(255) NOT NULL,
-    salt varchar(255) NOT NULL,
     password_hash varchar(255) NOT NULL,
     first_name varchar(255) NOT NULL,
 	last_name varchar(255) NOT NULL,
@@ -67,18 +66,55 @@ CREATE TABLE `account_transaction` (
 );
 
 
+CREATE TABLE interest_rate_schedule (
+    interest_rate_schedule_id int(11) NOT NULL AUTO_INCREMENT,
+    interest_rate_schedule_code VARCHAR(64) NOT NULL,
+    interest_rate_schedule_name VARCHAR(255) NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (interest_rate_schedule_id),
+    UNIQUE KEY (interest_rate_schedule_code)
+);
+
+CREATE TABLE interest_rate_schedule_bucket (
+    interest_rate_schedule_bucket_id int(11) NOT NULL AUTO_INCREMENT,
+    interest_rate_schedule_id int(11) NOT NULL,
+    amount_floor numeric(15, 2),
+    amount_ceiling numeric(15, 2),
+    interest_rate numeric(15, 2) NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (interest_rate_schedule_bucket_id),
+    FOREIGN KEY (interest_rate_schedule_id) REFERENCES `interest_rate_schedule`(interest_rate_schedule_id)
+);
+
+CREATE TABLE account_to_interest_rate_schedule (
+    account_to_interest_rate_schedule_id int(11) NOT NULL AUTO_INCREMENT,
+    account_id INT(11) NOT NULL,
+    interest_rate_schedule_id INT(11) NOT NULL,
+    start_date_time TIMESTAMP NOT NULL,
+    end_date_time TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (account_to_interest_rate_schedule_id),
+    UNIQUE KEY (account_id, interest_rate_schedule_id),
+    FOREIGN KEY (account_id) REFERENCES `account`(account_id),
+    FOREIGN KEY (interest_rate_schedule_id) REFERENCES `interest_rate_schedule`(interest_rate_schedule_id)
+);
+
+
 -- create default roles
 INSERT INTO role(role_id, role_code)
 VALUES(1, 'ADMIN'),
 	  (2, 'USER');
 
--- TODO testing, insert test user/admin accounts
+-- The following section is for testing
 INSERT INTO `user`
-(`user_id`,`user_name`,`salt`,`password_hash`,`first_name`,`last_name`)
+(`user_id`,`user_name`,`password_hash`,`first_name`,`last_name`)
 VALUES
-(1,'admin','KJd/+OwAhhZjc5XEIgBZSn0b9ZIW32nRSRuDvt0nrG0=','oJPykmJbqNYfRj4G9Dd5a8ps/8j4GP0puTeucusaBiE=','adminfirstname','adminlastname'),
-(2,'user','rvjMck3qDsERXES3QLdaaaMUL0EfiDNOQc3+yE5LHk8=','rCcbTzswO0LG7GySS0r8+CSNakk6BQk6FwyhP2MBTMo=','userfirstname','userlastname'),
-(3,'user2','rvjMck3qDsERXES3QLdaaaMUL0EfiDNOQc3+yE5LHk8=','rCcbTzswO0LG7GySS0r8+CSNakk6BQk6FwyhP2MBTMo=','userfirstname','userlastname');
+(1,'admin','$2a$10$b1aSFy1ZipJ3fttJljiyiurzq/sOjfBlugUvkNkpfxYrTjnhAwbzC','adminfirstname','adminlastname'),
+(2,'user','$2a$10$oR3PiY3AW3y0xQj1vbWXAuRU1Wn25P6.bSHdOPWxA1LtSyXrVuhAK','userfirstname','userlastname'),
+(3,'user2','$2a$10$DY8faVviBPUESH1yl0KrLOd9d9v370SCkFxro/7r4B0o8.lTBzzXm','userfirstname','userlastname');
 
 INSERT INTO `buddybank`.`user_to_role`
 (`user_to_role_id`, `user_id`, `role_id`)

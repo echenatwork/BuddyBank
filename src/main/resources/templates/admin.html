@@ -10,23 +10,9 @@
     <h4 th:each="message : ${messages}" th:text="${message}"></h4>
 </span>
 
-<h1>Create User</h1>
-<form action="#" th:action="@{/admin/create-user}" th:object="${createUserRequest}" method="post">
-    <h3>User</h3>
-    <p>Username: <input type="text" th:field="*{username}"/> </p>
-    <p>Password: <input type="text" th:field="*{password}" /></p>
-    <p>First name: <input type="text" th:field="*{firstName}" /> </p>
-    <p>Last name: <input type="text" th:field="*{lastName}" /> </p>
-    <p>Admin: <input type="checkbox" th:field="*{isAdmin}" /> </p>
-
-    <h3>Account</h3>
-    <p>Account code: <input type="text" th:field="*{accountCode}"/> </p>
-    <p>Initial balance: <input type="text" th:field="*{initialBalance}"/> </p>
-
-
-    <p><input type="submit" value="Create User"/> </p>
-</form>
-
+<h1>Admin actions</h1>
+<p> <a th:href="@{/admin/create-user}"> Create user </a> </p>
+<p> <a th:href="@{/admin/create-interest-rate-schedule}"> Create/Edit Interest Rate Schedules </a> </p>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Sign Out"/>
 </form>

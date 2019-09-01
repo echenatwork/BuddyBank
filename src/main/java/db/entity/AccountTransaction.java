@@ -12,7 +12,7 @@ import java.util.UUID;
 public class AccountTransaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_transaction_id")
     private Long id;
 

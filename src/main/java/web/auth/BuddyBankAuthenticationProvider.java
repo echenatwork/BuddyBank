@@ -43,7 +43,7 @@ public class BuddyBankAuthenticationProvider implements AuthenticationProvider {
             return null;
         }
 
-        if (passwordTool.hashPassword(password, user.getSalt()).equals(user.getPasswordHash())) {
+        if (passwordTool.matches(password, user.getPasswordHash())) {
             List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
             authorities.addAll(user.getRoles());
 
