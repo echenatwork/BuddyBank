@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+    <mapping>
+        <class-a>db.entity.Account</class-a>
+        <class-b>web.model.AccountBean</class-b>
+        <field>
+            <a>accountCode</a>
+            <b>code</b>
+        </field>
+        <field>
+            <a>accountName</a>
+            <b>name</b>
+        </field>
+        <field>
+            <a>accountToInterestRateSchedules</a>
+            <b>accountToSchedules</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>db.entity.InterestRateScheduleBucket</class-a>
+        <class-b>web.model.ScheduleBucketBean</class-b>
+    </mapping>
+
+    <mapping>
+        <class-a>db.entity.InterestRateSchedule</class-a>
+        <class-b>web.model.ScheduleBean</class-b>
+        <field>
+            <a>interestRateScheduleBuckets</a>
+            <b>buckets</b>
+        </field>
+
+        <field>
+            <a>interestRateScheduleCode</a>
+            <b>code</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>db.entity.AccountToInterestRateSchedule</class-a>
+        <class-b>web.model.AccountToScheduleBean</class-b>
+        <field>
+            <a>interestRateSchedule</a>
+            <b>schedule</b>
+        </field>
+    </mapping>
+</mappings>

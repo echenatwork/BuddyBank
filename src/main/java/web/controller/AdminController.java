@@ -1,14 +1,15 @@
 package web.controller;
 
-import db.entity.InterestRateSchedule;
-import db.entity.InterestRateScheduleBucket;
-import db.entity.RoleCode;
-import db.entity.User;
+import db.entity.*;
+import error.RequestException;
 import manager.AccountManager;
 import manager.AccountTransactionManager;
 import manager.InterestRateScheduleManager;
 import manager.UserManager;
+import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -16,9 +17,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import web.model.CreateInterestRateScheduleRequest;
-import web.model.CreateUserRequest;
-import web.model.LoadInterestRateScheduleRequest;
+import util.Util;
+import web.model.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -46,6 +46,9 @@ public class AdminController {
     @Autowired
     private InterestRateScheduleManager interestRateScheduleManager;
 
+    @Autowired
+    private Mapper mapper;
+
     @GetMapping
     public String adminMainView(Model model, HttpServletRequest httpServletRequest) {
         addAdminMessages(model, httpServletRequest);
@@ -56,6 +59,112 @@ public class AdminController {
         // returns the view name
         return "admin";
     }
+
+    @GetMapping("/assign-schedule-to-account")
+    public String assignScheduleToAccount(Model model, HttpServletRequest httpServletRequest) {
+        addAdminMessages(model, httpServletRequest);
+
+        CreateInterestRateScheduleRequest createInterestRateScheduleRequest = new CreateInterestRateScheduleRequest();
+        model.addAttribute("createInterestRateScheduleRequest", createInterestRateScheduleRequest);
+
+        List<String> codes = interestRateScheduleManager.getInterestRateScheduleCodes();
+        model.addAttribute("interestRateScheduleCodes", codes);
+        model.addAttribute("loadInterestRateScheduleRequest", new LoadInterestRateScheduleRequest());
+
+        // returns the view name
+        return "assign-schedule-to-account";
+    }
+
+    @GetMapping(value = "/api/get-accounts", produces = "application/json")
+    @ResponseBody
+    public List<AccountBean> getAccounts(HttpServletRequest httpServletRequest) {
+        List<Account> accounts = accountManager.getAllAccounts();
+
+        List<AccountBean> accountBeans = new ArrayList<>();
+
+
+        for (Account account : accounts) {
+            AccountBean accountBean = new AccountBean();
+            mapper.map(account, accountBean);
+            accountBeans.add(accountBean);
+        }
+
+        accountBeans.sort(Comparator.comparing(AccountBean::getCode));
+        return accountBeans;
+    }
+
+    @GetMapping(value = "/api/get-schedules-by-account", produces = "application/json")
+    @ResponseBody
+    public List<AccountToScheduleBean> getSchedulesByAccount(HttpServletRequest httpServletRequest, @RequestParam(name = "account") String accountCode) {
+        Account account = accountManager.findByAccountCode(accountCode);
+
+        List<AccountToScheduleBean> accountToScheduleBeans = new ArrayList<>();
+        for(AccountToInterestRateSchedule accountToInterestRateSchedule : account.getAccountToInterestRateSchedules()) {
+            AccountToScheduleBean accountToScheduleBean = new AccountToScheduleBean();
+            mapper.map(accountToInterestRateSchedule, accountToScheduleBean);
+            accountToScheduleBeans.add(accountToScheduleBean);
+        }
+        return accountToScheduleBeans;
+    }
+
+    @GetMapping(value = "/api/get-schedules", produces = "application/json")
+    @ResponseBody
+    public List<ScheduleBean> getSchedules(HttpServletRequest httpServletRequest, @RequestParam(name = "scheduleCode", required = false) String scheduleCode) {
+        List<ScheduleBean> scheduleBeans = new ArrayList<>();
+        List<InterestRateSchedule> interestRateSchedules = null;
+
+        if (StringUtils.isEmpty(scheduleCode)) {
+            interestRateSchedules = interestRateScheduleManager.getInterestRateSchedules();
+        } else {
+            interestRateSchedules = new ArrayList<>();
+            interestRateSchedules.add(interestRateScheduleManager.getInterestRateScheduleByCode(scheduleCode));
+        }
+
+        for(InterestRateSchedule interestRateSchedule : interestRateSchedules) {
+            ScheduleBean scheduleBean = new ScheduleBean();
+            mapper.map(interestRateSchedule, scheduleBean);
+            scheduleBeans.add(scheduleBean);
+        }
+        return scheduleBeans;
+    }
+
+    @PostMapping(value = "/api/add-schedule-to-account", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<String> addScheduleToAccount(HttpServletRequest httpServletRequest,
+                                               @RequestParam(name = "scheduleCode") String scheduleCode,
+                                               @RequestParam(name = "accountCode") String accountCode,
+                                               @RequestParam(name = "startDate") String startDateString,
+                                               @RequestParam(name = "endDate") String endDateString) throws Exception {
+        try {
+            Date startDate = Util.parseFromDatePicker(startDateString);
+            Date endDate = Util.parseFromDatePicker(endDateString);
+
+            if (endDate.before(startDate)) {
+                throw new RequestException("End date is before start date");
+            }
+
+            if (StringUtils.isEmpty(accountCode)) {
+                throw new RequestException("Account code is empty");
+            } else if (StringUtils.isEmpty(scheduleCode)) {
+                throw new RequestException("Schedule code is empty");
+            }
+
+
+            accountManager.addScheduleToAccount(startDate, endDate, accountCode, scheduleCode);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping(value = "/api/account/schedule/{id}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<String> deleteAccountToSchedule(HttpServletRequest httpServletRequest,
+                                                       @PathVariable(value="id") Long accountToScheduleId) throws Exception {
+        accountManager.deleteScheduleFromAccount(accountToScheduleId);
+        return ResponseEntity.ok().build();
+    }
+
 
     @GetMapping("/create-interest-rate-schedule")
     public String createInterestRateScheduleView(Model model, HttpServletRequest httpServletRequest) {

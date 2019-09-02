@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Assign Schedule to Account</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <script type="text/javascript" src="/scripts/jquery-3.4.1.js">
+    </script>
+
+    <script type="text/javascript" src="/scripts/assign-schedule-to-account.js">
+    </script>
+
+    <script type="text/javascript" src="/scripts/jquery-ui/jquery-ui.js">
+    </script>
+
+    <link href="/scripts/jquery-ui/jquery-ui.css" rel="stylesheet" />
+
+</head>
+<body>
+
+<span th:if="${messages != null &amp;&amp; !messages.isEmpty()}">
+    <h4 th:each="message : ${messages}" th:text="${message}"></h4>
+</span>
+
+<a th:href="@{/admin}"> Back </a>
+
+<h1>Account to Schedule</h1>
+<table width="75%">
+    <tr>
+        <th align="left" width="50%">
+            Account: <select id="account"> </select>
+        </th>
+        <th align="left" width="50%">
+            Schedule: <select id="schedule"></select>
+        </th>
+    </tr>
+    <tr>
+        <td>
+            <div id="accountSchedules"></div>
+        </td>
+        <td valign="top">
+            <div>
+                <p>Start Date: <input type="text" id="startDate"/> </p>
+                <p>End Date: <input type="text" id="endDate"/> </p>
+                <input type='button' value='Add to Account' name='Add Button' onclick='addSchedule();' />
+            </div>
+            <div id="selectedSchedule"></div>
+        </td>
+    </tr>
+</table>
+
+
+</body>
+</html>

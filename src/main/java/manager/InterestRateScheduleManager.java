@@ -13,4 +13,6 @@ public interface InterestRateScheduleManager {
     public List<String> getInterestRateScheduleCodes();
 
     public InterestRateSchedule getInterestRateScheduleByCode(String code);
+
+    public List<InterestRateSchedule> getInterestRateSchedules();
 }
