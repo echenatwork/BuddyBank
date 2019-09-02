@@ -24,7 +24,7 @@ public class InterestRateSchedule {
     @Column(name = "interest_rate_schedule_name")
     private String name;
 
-    @OneToMany(mappedBy = "interestRateSchedule", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "interestRateSchedule", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("amount_floor ASC")
     private List<InterestRateScheduleBucket> interestRateScheduleBuckets;
 

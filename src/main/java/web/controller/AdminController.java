@@ -11,12 +11,14 @@ import manager.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import web.model.CreateInterestRateScheduleRequest;
 import web.model.CreateUserRequest;
+import web.model.LoadInterestRateScheduleRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -62,12 +64,19 @@ public class AdminController {
         CreateInterestRateScheduleRequest createInterestRateScheduleRequest = new CreateInterestRateScheduleRequest();
         model.addAttribute("createInterestRateScheduleRequest", createInterestRateScheduleRequest);
 
+        List<String> codes = interestRateScheduleManager.getInterestRateScheduleCodes();
+        model.addAttribute("interestRateScheduleCodes", codes);
+        model.addAttribute("loadInterestRateScheduleRequest", new LoadInterestRateScheduleRequest());
+
         // returns the view name
         return "create-interest-rate-schedule";
     }
 
     @PostMapping("/create-interest-rate-schedule")
-    public String createInterestRateScheduleEndpoint(@ModelAttribute CreateInterestRateScheduleRequest createInterestRateScheduleRequest, HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes) {
+    public String createInterestRateScheduleEndpoint(@ModelAttribute CreateInterestRateScheduleRequest createInterestRateScheduleRequest,
+                                                     @ModelAttribute LoadInterestRateScheduleRequest loadInterestRateScheduleRequest,
+                                                     HttpServletRequest httpServletRequest,
+                                                     RedirectAttributes redirectAttributes) {
 
         /* TODO
          * This part of dynamic tables works, but this is really awkward, must be a better way to do the
@@ -91,7 +100,7 @@ public class AdminController {
         List<String> messages = new ArrayList<>();
 
         try {
-            InterestRateSchedule interestRateSchedule = interestRateScheduleManager.createInterestRateSchedule(createInterestRateScheduleRequest.getCode(), createInterestRateScheduleRequest.getName(), bucketEntities);
+            InterestRateSchedule interestRateSchedule = interestRateScheduleManager.saveInterestRateSchedule(createInterestRateScheduleRequest.getCode(), createInterestRateScheduleRequest.getName(), bucketEntities);
             messages.add("Successfully created interest rate schedule with name=" + interestRateSchedule.getName());
         } catch (Exception e) {
             // TODO add logging
@@ -120,6 +129,31 @@ public class AdminController {
         return "create-interest-rate-schedule";
     }
 
+    @PostMapping("/load-interest-rate-schedule")
+    public String loadInterestRateScheduleEndpoint(@ModelAttribute LoadInterestRateScheduleRequest loadInterestRateScheduleRequest,
+                                                   @ModelAttribute CreateInterestRateScheduleRequest createInterestRateScheduleRequest,
+                                                   HttpServletRequest httpServletRequest,
+                                                   RedirectAttributes redirectAttributes) {
+
+        InterestRateSchedule interestRateSchedule = interestRateScheduleManager.getInterestRateScheduleByCode(loadInterestRateScheduleRequest.getCode());
+
+        createInterestRateScheduleRequest.setCode(interestRateSchedule.getInterestRateScheduleCode());
+        createInterestRateScheduleRequest.setName(interestRateSchedule.getName());
+
+        List<CreateInterestRateScheduleRequest.InterestRateBucket> modelBuckets = new ArrayList<>();
+        for (InterestRateScheduleBucket bucket : interestRateSchedule.getInterestRateScheduleBuckets()) {
+            CreateInterestRateScheduleRequest.InterestRateBucket modelBucket = new CreateInterestRateScheduleRequest.InterestRateBucket();
+            modelBucket.setAmountCeiling(bucket.getAmountCeiling());
+            modelBucket.setAmountFloor(bucket.getAmountFloor());
+            modelBucket.setInterestRate(bucket.getInterestRate());
+            modelBuckets.add(modelBucket);
+        }
+        createInterestRateScheduleRequest.setInterestRateBuckets(modelBuckets);
+
+        // returns the view name
+        return "create-interest-rate-schedule";
+    }
+
     @GetMapping("/create-user")
     public String createUserView(Model model, HttpServletRequest httpServletRequest) {
         addAdminMessages(model, httpServletRequest);
@@ -135,7 +169,7 @@ public class AdminController {
         Map<String, ?> flashMap = RequestContextUtils.getInputFlashMap(httpServletRequest);
         List<String> messages = null;
         if (flashMap != null) {
-            messages = (List<String>)flashMap.get(FLASH_MAP_ADMIN_MESSAGES);
+            messages = (List<String>) flashMap.get(FLASH_MAP_ADMIN_MESSAGES);
         }
         model.addAttribute("messages", messages);
     }

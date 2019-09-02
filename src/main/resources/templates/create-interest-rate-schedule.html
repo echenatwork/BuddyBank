@@ -3,6 +3,9 @@
 <head>
     <title>Create Interest Rate Schedule</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <script type = "text/javascript" src = "/scripts/jquery-3.4.1.js">
+    </script>
 </head>
 <body>
 
@@ -12,8 +15,20 @@
 
 <a th:href="@{/admin}"> Back </a>
 
+<h1>Load Interest Rate Schedule</h1>
+<form action="#" th:action="@{/admin/load-interest-rate-schedule}" th:object="${loadInterestRateScheduleRequest}"
+      method="post">
+    <select th:field="*{code}">
+            <option th:each="code : ${interestRateScheduleCodes}"
+                    th:value="${code}"
+                    th:text="${code}"
+            />
+    </select>
 
-<h1>Create Interest Rate Schedule</h1>
+    <input type="submit" value="Load"/>
+</form>
+
+<h1>Create/Edit Interest Rate Schedule</h1>
 <form action="#" th:action="@{/admin/create-interest-rate-schedule}" th:object="${createInterestRateScheduleRequest}"
       method="post">
     <h3>Interest Rate Schedule</h3>
@@ -50,7 +65,7 @@
     <button type="submit" name="addRow">Add row</button>
 
 
-    <p><input type="submit" value="Create Interest Rate Schedule"/></p>
+    <p><input type="submit" value="Save Interest Rate Schedule"/></p>
 </form>
 
 <form th:action="@{/logout}" method="post">
