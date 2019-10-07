@@ -1,13 +1,14 @@
 package web.model;
 
+import java.time.Instant;
 import java.util.Date;
 
 public class AccountToScheduleBean {
 
     private Long id;
     private ScheduleBean schedule;
-    private Date startDateTime;
-    private Date endDateTime;
+    private Instant startDateTime;
+    private Instant endDateTime;
 
     public Long getId() {
         return id;
@@ -25,19 +26,19 @@ public class AccountToScheduleBean {
         this.schedule = schedule;
     }
 
-    public Date getStartDateTime() {
+    public Instant getStartDateTime() {
         return startDateTime;
     }
 
-    public void setStartDateTime(Date startDateTime) {
+    public void setStartDateTime(Instant startDateTime) {
         this.startDateTime = startDateTime;
     }
 
-    public Date getEndDateTime() {
+    public Instant getEndDateTime() {
         return endDateTime;
     }
 
-    public void setEndDateTime(Date endDateTime) {
+    public void setEndDateTime(Instant endDateTime) {
         this.endDateTime = endDateTime;
     }
 }

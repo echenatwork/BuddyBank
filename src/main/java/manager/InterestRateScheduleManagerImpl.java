@@ -4,7 +4,7 @@ import db.dao.InterestRateScheduleRepository;
 import db.entity.InterestRateSchedule;
 import db.entity.InterestRateScheduleBucket;
 import error.RequestException;
-import org.dozer.util.IteratorUtils;
+import org.apache.commons.collections.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;

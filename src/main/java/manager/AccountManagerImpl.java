@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +41,7 @@ public class AccountManagerImpl implements AccountManager {
     }
 
     @Override
-    public Account addScheduleToAccount(Date startDate, Date endDate, String accountCode, String scheduleCode) {
+    public Account addScheduleToAccount(Instant startDate, Instant endDate, String accountCode, String scheduleCode) {
         AccountToInterestRateSchedule accountToInterestRateSchedule = new AccountToInterestRateSchedule();
         accountToInterestRateSchedule.setStartDateTime(startDate);
         accountToInterestRateSchedule.setEndDateTime(endDate);

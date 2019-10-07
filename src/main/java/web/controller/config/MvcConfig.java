@@ -1,13 +1,16 @@
 package web.controller.config;
 
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
+import com.github.dozermapper.core.DozerBeanMapperBuilder;
+import com.github.dozermapper.core.Mapper;
+import com.github.dozermapper.spring.DozerBeanMapperFactoryBean;
+import db.entity.AccountToInterestRateSchedule;
+import db.entity.InterestRateSchedule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import java.util.Arrays;
+import web.model.AccountToScheduleBean;
 
 @Configuration
 public class MvcConfig extends WebMvcConfigurerAdapter {
@@ -22,9 +25,9 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public Mapper mapper() {
-        DozerBeanMapper mapper = new DozerBeanMapper();
-        mapper.setMappingFiles(Arrays.asList("config/dozer_mappings.xml"));
-
+        Mapper mapper = DozerBeanMapperBuilder.create()
+                .withClassLoader(this.getClass().getClassLoader()) // need to set class loader explicitly otherwise we get type mismatch exceptions
+                .withMappingFiles("config/dozer_mappings.xml").build();
         return mapper;
     }
 }

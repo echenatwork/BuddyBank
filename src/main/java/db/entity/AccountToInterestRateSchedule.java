@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -27,10 +28,10 @@ public class AccountToInterestRateSchedule {
     private Account account;
 
     @Column(name = "start_date_time")
-    private Date startDateTime;
+    private Instant startDateTime;
 
     @Column(name = "end_date_time")
-    private Date endDateTime;
+    private Instant endDateTime;
 
     public Long getId() {
         return id;
@@ -56,19 +57,19 @@ public class AccountToInterestRateSchedule {
         this.account = account;
     }
 
-    public Date getStartDateTime() {
+    public Instant getStartDateTime() {
         return startDateTime;
     }
 
-    public void setStartDateTime(Date startDateTime) {
+    public void setStartDateTime(Instant startDateTime) {
         this.startDateTime = startDateTime;
     }
 
-    public Date getEndDateTime() {
+    public Instant getEndDateTime() {
         return endDateTime;
     }
 
-    public void setEndDateTime(Date endDateTime) {
+    public void setEndDateTime(Instant endDateTime) {
         this.endDateTime = endDateTime;
     }
 }

@@ -1,13 +1,12 @@
 package web.controller;
 
+import com.github.dozermapper.core.Mapper;
 import db.entity.*;
 import error.RequestException;
 import manager.AccountManager;
 import manager.AccountTransactionManager;
 import manager.InterestRateScheduleManager;
 import manager.UserManager;
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,6 +20,7 @@ import util.Util;
 import web.model.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -136,10 +136,10 @@ public class AdminController {
                                                @RequestParam(name = "startDate") String startDateString,
                                                @RequestParam(name = "endDate") String endDateString) throws Exception {
         try {
-            Date startDate = Util.parseFromDatePicker(startDateString);
-            Date endDate = Util.parseFromDatePicker(endDateString);
+            Instant startDate = Util.parseFromDatePicker(startDateString).toInstant();
+            Instant endDate = Util.parseFromDatePicker(endDateString).toInstant();
 
-            if (endDate.before(startDate)) {
+            if (endDate.isBefore(startDate)) {
                 throw new RequestException("End date is before start date");
             }
 
