@@ -16,7 +16,7 @@ import java.util.List;
 public class InterestEngineImpl {
 
     // Fridays an midnight
-    private static final String CRON_INTEREST_EXPRESSION = "0 0 0 * * FRI";
+    private static final String CRON_FRIDAYS = "0 0 0 * * FRI";
 
     /**
      * Returns a list of interest payments. Interest is paid every Friday.
@@ -30,13 +30,12 @@ public class InterestEngineImpl {
      * @return
      */
     public List<AccountTransaction> calculateInterestPayments(Date now, Account account) {
-        Calendar nowCal = Calendar.getInstance();
-        nowCal.setTime(now);
 
+        InterestRateCalculator interestRateCalculator = new InterestRateCalculator(CRON_FRIDAYS);
         // TODO need to finish adding schedules to accounts first
         account.getAccountToInterestRateSchedules();
 
-        int dayOfWeek = nowCal.get(Calendar.DAY_OF_WEEK);
+
 
         LocalDate date = now.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 

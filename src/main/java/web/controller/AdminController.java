@@ -12,11 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import util.Util;
+import util.Utils;
 import web.model.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -136,8 +135,8 @@ public class AdminController {
                                                @RequestParam(name = "startDate") String startDateString,
                                                @RequestParam(name = "endDate") String endDateString) throws Exception {
         try {
-            Instant startDate = Util.parseFromDatePicker(startDateString).toInstant();
-            Instant endDate = Util.parseFromDatePicker(endDateString).toInstant();
+            Instant startDate = Utils.parseFromDatePicker(startDateString).toInstant();
+            Instant endDate = Utils.parseFromDatePicker(endDateString).toInstant();
 
             if (endDate.isBefore(startDate)) {
                 throw new RequestException("End date is before start date");

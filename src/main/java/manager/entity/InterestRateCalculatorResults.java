@@ -1,10 +1,16 @@
 package manager.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InterestRateCalculatorResults {
     List<InterestPayment> interestPayments;
     List<String> errorMessages;
+
+    public InterestRateCalculatorResults() {
+        this.interestPayments = new ArrayList<>();
+        this.errorMessages = new ArrayList<>();
+    }
 
     public List<InterestPayment> getInterestPayments() {
         return interestPayments;
