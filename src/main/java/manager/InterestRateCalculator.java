@@ -15,7 +15,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Simple interest rate calculator that calculates the interest to be paid every Friday
+ * Simple interest rate calculator that calculates the interest to be paid by the given cron expression
+ * Default is Midnight on Friday
  */
 public class InterestRateCalculator {
 
@@ -79,7 +80,7 @@ public class InterestRateCalculator {
         }
 
         if (interestRateSchedule == null) {
-            return null;
+            throw new RequestException("No valid interest rate found for amount " + currentAmount + " and date " + now);
         }
 
         for (InterestRateScheduleBucket bucket : interestRateSchedule.getInterestRateScheduleBuckets()) {

@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 
 public class Utils {
@@ -16,6 +18,13 @@ public class Utils {
 
     public static Instant parseLocalTimeZoneInstant(String string) {
         return LocalDateTime.parse(string).atZone(ZoneId.systemDefault()).toInstant();
+    }
+
+    public static <E> Collection<E> emptyIfNull(Collection<E> collection) {
+        if (collection == null) {
+            return Collections.EMPTY_LIST;
+        }
+        return collection;
     }
 
 }
